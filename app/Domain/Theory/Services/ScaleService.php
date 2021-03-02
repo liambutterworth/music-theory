@@ -2,15 +2,13 @@
 
 namespace App\Domain\Theory\Services;
 
-use App\Domain\Concerns\ManagesModel;
-use App\Domain\Concerns\ValidatesData;
+use App\Contracts\Services\ScaleService as Contract;
+use App\Domain\Theory\Collections\ScaleCollection;
 use App\Domain\Theory\Models\Scale;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class ScaleService
+class ScaleService implements Contract
 {
-    use ManagesModel, ValidatesData;
-
     protected IntervalService $interval;
 
     public function __construct(IntervalService $interval)
@@ -18,27 +16,24 @@ class ScaleService
         $this->interval = $interval;
     }
 
-    protected function model(): string
+    public function all(): ScaleCollection
     {
-        return Scale::class;
+        return Scale::all();
     }
 
-    protected function rules(): array
+    public function paginate(): LengthAwarePaginator
     {
-        return [
-            'name' => 'string',
-            'formula' => 'string',
-        ];
+        return Scale::paginate();
+    }
+
+    public function find(int $id): Scale
+    {
+        return Scale::find($id);
     }
 
     public function create(array $data): Scale
     {
-        $validated = $this->validate($data, [
-            'name' => 'required',
-            'formula' => 'required',
-        ]);
-
-        return tap(Scale::create($validated), function($scale) {
+        return tap(Scale::create($data), function($scale) {
             $intervals = $this->interval->getFromFormula($scale->formula);
 
             $scale->intervals()->attach($intervals->pluck('id'));
@@ -48,7 +43,7 @@ class ScaleService
     public function update(int $id, array $data): Scale
     {
         return tap($this->find($id), function($scale) use($data) {
-            $scale->fill($this->validate($data))->save();
+            $scale->fill($data)->save();
 
             if ($scale->wasChanged('formula')) {
                 $intervals = $this->interval->getFromFormula($scale->formula);

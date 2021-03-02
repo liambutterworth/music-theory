@@ -6,11 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateChordDegreesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('chord_degrees', function (Blueprint $table) {
@@ -20,11 +15,6 @@ class CreateChordDegreesTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('chord_degrees');

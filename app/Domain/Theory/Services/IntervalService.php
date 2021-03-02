@@ -2,34 +2,26 @@
 
 namespace App\Domain\Theory\Services;
 
-use App\Domain\Concerns\ManagesModel;
-use App\Domain\Concerns\ValidatesData;
+use App\Contracts\Services\IntervalService as Contract;
 use App\Domain\Theory\Collections\IntervalCollection;
 use App\Domain\Theory\Models\Interval;
-use Illuminate\Support\Str;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class IntervalService
+class IntervalService implements Contract
 {
-    use ManagesModel, ValidatesData;
-
-    protected function model(): string
+    public function all(): IntervalCollection
     {
-        return Interval::class;
+        return Interval::all();
     }
 
-    public function rules(): array
+    public function paginate(): LengthAwarePaginator
     {
-        return [
-            'name' => 'string',
-            'abbr' => 'string',
-            'steps' => 'numeric',
-            'degree' => 'string',
-        ];
+        return Interaval::paginate();
     }
 
-    public function getFromFormula(string $formula): IntervalCollection
+    public function find(int $id): Interval
     {
-        return $this->query()->whereInFormula($formula)->get();
+        return Interval::find($id);
     }
 
     public function create(array $data): Interval
@@ -47,7 +39,7 @@ class IntervalService
     public function update(int $id, array $data): Interval
     {
         return tap($this->find($id), function($interval) use($data) {
-            $interval->fill($this->validate($data))->save();
+            $interval->fill($data)->save();
         });
     }
 
@@ -56,5 +48,10 @@ class IntervalService
         return tap($this->find($id), function($interval) {
             $interval->delete();
         });
+    }
+
+    public function getFromFormula(string $formula): IntervalCollection
+    {
+        return Interval::whereInFormula($formula)->get();
     }
 }

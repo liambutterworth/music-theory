@@ -2,39 +2,47 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Theory\Services\NoteService;
-use App\Domain\Theory\Data\NoteData;
+use App\Contracts\Services\NoteService;
+use App\Http\Requests\NoteFormRequest;
 use App\Http\Resources\NoteResource;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class NoteController extends Controller
+class NoteController
 {
     protected NoteService $note;
-    protected Request $request;
 
-    public function __construct(NoteService $note, Request $request)
+    public function __construct(NoteService $note)
     {
         $this->note = $note;
-        $this->request = $request;
     }
 
     public function index(): ResourceCollection
     {
-        $notes = $this->note->all();
-
-        return NoteResource::collection($notes);
+        return NoteResource::collection($this->note->all());
     }
 
     public function key(int $id): ResourceCollection
     {
-        $notes = $this->note->getKey($id);
-
-        return NoteResource::collection($notes);
+        return NoteResource::collection($this->note->getKey($id));
     }
 
-    public function show(int $id): NoteData
+    public function show(int $id): NoteResource
     {
-        return $this->note->find($id);
+        return new NoteResource($this->note->find($id));
+    }
+
+    public function store(NoteFormRequest $request): NoteResource
+    {
+        return new NoteResource($this->note->create($request->validated()));
+    }
+
+    public function update(int $id, NoteFormRequest $request): NoteResource
+    {
+        return new NoteResource($this->note->update($id, $request->validated()));
+    }
+
+    public function delete(int $id): NoteResource
+    {
+        return new NoteResource($this->note->delete($id));
     }
 }

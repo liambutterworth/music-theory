@@ -2,56 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Theory\Services\ChordService;
+use App\Contracts\Services\ChordService;
+use App\Http\Requests\ChordFormRequest;
 use App\Http\Resources\ChordResource;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ChordController
 {
     protected ChordService $chord;
-    protected Request $request;
 
-    public function __construct(ChordService $chord, Request $request)
+    public function __construct(ChordService $chord)
     {
         $this->chord = $chord;
-        $this->request = $request;
     }
 
     public function index(): ResourceCollection
     {
-        $paginated = $this->chord->paginate();
-
-        return ChordResource::collection($paginated);
+        return ChordResource::collection($this->chord->paginate());
     }
 
     public function show(int $id): ChordResource
     {
-        $chord = $this->chord->find($id);
-
-        return new ChordResource($chord);
+        return new ChordResource($this->chord->find($id));
     }
 
-    public function store(): ChordResource
+    public function store(ChordFormRequest $request): ChordResource
     {
-        $data = $this->request->all();
-        $chord = $this->chord->create($data);
-
-        return new ChordResource($chord);
+        return new ChordResource($this->chord->create($request->validated()));
     }
 
-    public function update(int $id): ChordResource
+    public function update(int $id, ChordFormRequest $request): ChordResource
     {
-        $data = $this->request->all();
-        $chord = $this->chord->update($id, $data);
-
-        return new ChordResource($chord);
+        return new ChordResource($this->chord->update($id, $request->validated()));
     }
 
     public function delete(int $id): ChordResource
     {
-        $chord = $this->chord->delete($id);
-
-        return new ChordResource($chord);
+        return new ChordResource($this->chord->delete($id));
     }
 }

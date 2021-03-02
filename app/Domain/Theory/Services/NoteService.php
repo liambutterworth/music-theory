@@ -2,33 +2,45 @@
 
 namespace App\Domain\Theory\Services;
 
+use App\Contracts\Services\NoteService as Contract;
 use App\Domain\Theory\Collections\NoteCollection;
-use App\Domain\Theory\Data\NoteData;
 use App\Domain\Theory\Models\Note;
-use App\Domain\Concerns\ManagesModel;
-use App\Domain\Concerns\ValidatesData;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class NoteService
+class NoteService implements Contract
 {
-    use ManagesModel, ValidatesData;
-
-    protected function model(): string
+    public function all(): NoteCollection
     {
-        return Note::class;
+        return Note::all();
     }
 
-    public function rules(): array
+    public function paginate(): LengthAwarePaginator
     {
-        return [
-            'name' => 'string',
-            'signature' => 'string',
-            'is_natural' => 'boolean',
-            'is_accidental' => 'boolean',
-            'is_flat' => 'boolean',
-            'is_sharp' => 'boolean',
-        ];
+        return Note::paginate();
+    }
+
+    public function find(int $id): Note
+    {
+        return Note::find($id);
+    }
+
+    public function create(array $data): Note
+    {
+        return Note::create($data);
+    }
+
+    public function update(int $id, array $data): Note
+    {
+        return tap($this->find($id), function($note) use($data) {
+            $note->fill($data)->save();
+        });
+    }
+
+    public function delete(int $id): Note
+    {
+        return tap($this->find($id), function($note) {
+            $note->delete();
+        });
     }
 
     public function getKey(int $id): NoteCollection
@@ -42,45 +54,5 @@ class NoteService
         } else {
             return Note::naturals()->get();
         }
-    }
-
-    public function all()
-    {
-        return Note::all()->map(function($note) {
-            return NoteData::fromModel($note);
-        });
-    }
-
-    public function find(int $id): NoteData
-    {
-        return NoteData::fromModel(Note::find($id));
-    }
-
-    public function create(array $data): Note
-    {
-        $validated = $this->validate($data, [
-            'name' => 'required',
-            'signature' => 'required',
-            'is_natural' => 'required',
-            'is_accidental' => 'required',
-            'is_flat' => 'required',
-            'is_sharp' => 'required',
-        ]);
-
-        return Note::create($validated);
-    }
-
-    public function update(int $id, array $data): Note
-    {
-        return tap($this->find($id), function($note) use($data) {
-            $note->fill($this->validate($data))->save();
-        });
-    }
-
-    public function delete(): Note
-    {
-        return tap($this->find($id), function($note) {
-            $note->delete();
-        });
     }
 }

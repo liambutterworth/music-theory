@@ -13,7 +13,6 @@ class CreateChordsTable extends Migration
             $table->string('name');
             $table->string('abbr');
             $table->string('formula');
-            $table->timestamps();
         });
     }
 

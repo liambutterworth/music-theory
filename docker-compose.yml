@@ -16,7 +16,6 @@ services:
       - mysql
     networks:
       - laravel
-
   mysql:
     image: mysql:5.7.29
     container_name: mysql
@@ -24,14 +23,15 @@ services:
     tty: true
     ports:
       - '3306:3306'
+    volumes:
+      - data:/var/lib/mysql
+    networks:
+      - laravel
     environment:
       MYSQL_DATABASE: music
       MYSQL_USER: user
       MYSQL_PASSWORD: user
       MYSQL_ROOT_PASSWORD: root
-    networks:
-      - laravel
-
   php:
     build:
       context: .

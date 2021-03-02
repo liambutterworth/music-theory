@@ -16,7 +16,6 @@ class CreateNotesTable extends Migration
             $table->boolean('is_accidental');
             $table->boolean('is_flat');
             $table->boolean('is_sharp');
-            $table->timestamps();
         });
     }
 

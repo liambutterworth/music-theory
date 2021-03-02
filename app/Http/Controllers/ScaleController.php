@@ -2,56 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Theory\Services\ScaleService;
+use App\Contracts\Services\ScaleService;
+use App\Http\Requests\ScaleFormRequest;
 use App\Http\Resources\ScaleResource;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ScaleController extends Controller
+class ScaleController
 {
     protected ScaleService $scale;
-    protected Request $request;
 
-    public function __construct(ScaleService $scale, Request $request)
+    public function __construct(ScaleService $scale)
     {
         $this->scale = $scale;
-        $this->request = $request;
     }
 
     public function index(): ResourceCollection
     {
-        $paginated = $this->scale->paginate();
-
-        return ScaleResource::collection($paginated);
+        return ScaleResource::collection($this->scale->paginate());
     }
 
     public function show(int $id): ScaleResource
     {
-        $scale = $this->scale->find($id);
-
-        return new ScaleResource($scale);
+        return new ScaleResource($this->scale->find($id));
     }
 
-    public function store(): ScaleResource
+    public function store(ScaleFormRequest $request): ScaleResource
     {
-        $data = $this->request->all();
-        $scale = $this->scale->create($data);
-
-        return new ScaleResource($this->scale->create($this->request->all()));
+        return new ScaleResource($this->scale->create($request->validated()));
     }
 
     public function update(int $id): ScaleResource
     {
-        $data = $this->request->all();
-        $scale = $this->scale->update($id, $data);
-
-        return new ScaleResource($scale);
+        return new ScaleResource($this->scale->udpate($id, $request->validated()));
     }
 
     public function delete(int $id): ScaleResource
     {
-        $scale = $this->scale->find($id);
-
-        return new ScaleResource($scale);
+        return new ScaleResource($this->scale->find($id));
     }
 }

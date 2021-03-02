@@ -2,34 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Theory\Services\ChordService;
-use App\Domain\Theory\Services\IntervalService;
-use App\Domain\Theory\Services\ScaleService;
-use App\Domain\Theory\Services\NoteService;
+use App\Domain\Theory\Models\Chord;
+use App\Domain\Theory\Models\Interval;
+use App\Domain\Theory\Models\Note;
+use App\Domain\Theory\Models\Scale;
 use Illuminate\Database\Seeder;
 
 class TheorySeeder extends Seeder
 {
-    protected IntervalService $interval;
-    protected ChordService $chord;
-    protected ScaleService $scale;
-    protected NoteService $note;
-
-    public function __construct(
-        IntervalService $interval,
-        ChordService $chord,
-        ScaleService $scale,
-        NoteService $note
-    ) {
-        $this->interval = $interval;
-        $this->chord = $chord;
-        $this->scale = $scale;
-        $this->note = $note;
-    }
-
     public function run(): void
     {
-        $this->interval->createMany([
+        Interval::insert([
             [ 'name' => 'Perfect Unison',     'abbr' => 'P1', 'steps' => 0,  'degree' => '1' ],
             [ 'name' => 'Diminished Second',  'abbr' => 'd2', 'steps' => 0,  'degree' => 'bb2' ],
             [ 'name' => 'Minor Second',       'abbr' => 'm2', 'steps' => 1,  'degree' => 'b2' ],
@@ -58,19 +41,19 @@ class TheorySeeder extends Seeder
             [ 'name' => 'Augmented Seventh',  'abbr' => 'A7', 'steps' => 12, 'degree' => '#7' ],
         ]);
 
-        $this->chord->createMany([
+        Chord::insert([
             [ 'name' => 'Major',      'abbr' => 'maj', 'formula' => '1-3-5' ],
             [ 'name' => 'Minor',      'abbr' => 'm',   'formula' => '1-b3-5' ],
             [ 'name' => 'Diminished', 'abbr' => 'dim', 'formula' => '1-b3-b5' ],
             [ 'name' => 'Augmented',  'abbr' => 'aug', 'formula' => '1-3-#5' ],
         ]);
 
-        $this->scale->createMany([
+        Scale::insert([
             [ 'name' => 'Major', 'formula' => '1-2-3-4-5-6-7' ],
             [ 'name' => 'Minor', 'formula' => '1-2-b3-4-5-b6-b7' ],
         ]);
 
-        $this->note->createMany([
+        Note::insert([
             [ 'name' => 'Ab', 'signature' => 'bbbb',     'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
             [ 'name' => 'A',  'signature' => 'n',        'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
             [ 'name' => 'A#', 'signature' => '##x##xx#', 'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],

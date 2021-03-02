@@ -2,56 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Domain\Theory\Services\IntervalService;
+use App\Contracts\Services\IntervalService;
+use App\Http\Requests\IntervalFormRequest;
 use App\Http\Resources\IntervalResource;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class IntervalController
 {
     protected IntervalService $interval;
-    protected Request $request;
 
-    public function __construct(IntervalService $interval, Request $request)
+    public function __construct(IntervalService $interval)
     {
         $this->interval = $interval;
-        $this->request = $request;
     }
 
     public function index(): ResourceCollection
     {
-        $intervals = $this->interval->all();
-
-        return IntervalResource::collection($intervals);
+        return IntervalResource::collection($this->intervals->all());
     }
 
     public function show(int $id): IntervalResource
     {
-        $interval = $this->interval->find($id);
-
-        return new IntervalResource($interval);
+        return new IntervalResource($this->interval->find($id));
     }
 
-    public function store(): IntervalResource
+    public function store(IntervalFormRequest $request): IntervalResource
     {
-        $data = $this->request->all();
-        $interval = $this->interval->create($data);
-
-        return new IntervalResource($interval);
+        return new IntervalResource($this->interval->create($request->validated()));
     }
 
-    public function update(int $id): IntervalResource
+    public function update(int $id, IntervalFormRequest $request): IntervalResource
     {
-        $data = $this->request->all();
-        $interval = $this->interval->update($id, $data);
-
-        return new IntervalResource($interval);
+        return new IntervalResource($this->interval->update($id, $request->validated()));
     }
 
     public function delete(int $id): IntervalResource
     {
-        $interval = $this->interval->delete($interval);
-
-        return new IntervalResource($interval);
+        return new IntervalResource($this->interval->delete($interval));
     }
 }

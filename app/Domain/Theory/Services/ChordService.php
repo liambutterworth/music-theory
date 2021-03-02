@@ -2,16 +2,13 @@
 
 namespace App\Domain\Theory\Services;
 
-use App\Domain\Concerns\ManagesModel;
-use App\Domain\Concerns\ValidatesData;
-use App\Domain\Theory\Models\Chord;
+use App\Contracts\Services\ChordService as Contract;
 use App\Domain\Theory\Collections\ChordCollection;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Domain\Theory\Models\Chord;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class ChordService
+class ChordService implements Contract
 {
-    use ManagesModel, ValidatesData;
-
     protected IntervalService $interval;
 
     public function __construct(IntervalService $interval)
@@ -19,28 +16,23 @@ class ChordService
         $this->interval = $interval;
     }
 
-    protected function model(): string
+    public function all(): ChordCollection
     {
-        return Chord::class;
+        return Chord::all();
     }
 
-    public function rules(): array
+    public function paginate(): LengthAwarePaginator
     {
-        return [
-            'name' => 'string',
-            'abbr' => 'string',
-            'formula' => 'string',
-        ];
+        return Chord::paginate();
+    }
+
+    public function find(int $id): Chord
+    {
+        return Chord::find($id);
     }
 
     public function create(array $data): Chord
     {
-        $validated = $this->validate($data, [
-            'name' => 'required',
-            'abbr' => 'required',
-            'formula' => 'required',
-        ]);
-
         return tap(Chord::create($validated), function($chord) {
             $intervals = $this->interval->getFromFormula($chord->formula);
 
@@ -51,7 +43,7 @@ class ChordService
     public function update(int $id, array $data): Chord
     {
         return tap($this->find($id), function($chord) use($data) {
-            $chord->fill($this->validate($data))->save();
+            $chord->fill($data)->save();
 
             if ($chord->wasChanged('formula')) {
                 $intervals = $this->interval->getFromFormula($chord->formula);
