@@ -1,0 +1,40 @@
+//
+// Functions
+//
+// :: Strip
+// :: Lines
+// :: Border
+
+//
+// Strip
+//
+
+@function strip($number) {
+    @if type-of($number) == 'number' and not unitless($number) {
+        @return $number / ($number * 0 + 1);
+    } @else {
+        @return $number;
+    }
+}
+
+//
+// Lines
+//
+
+@function lines($count, $pixels-to-subtract: 0) {
+    $pixels: strip($pixels-to-subtract);
+    $base: strip($base-font-size);
+    $height: strip($base-line-height);
+    $value: $height / ($base - $pixels) * $count;
+    @return #{$value}rem;
+}
+
+//
+// Border
+//
+
+@function border($pixels) {
+    $target: strip($pixels);
+    $base: strip($base-font-size);
+    @return #{$target / $base}rem;
+}

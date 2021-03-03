@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Scales;
+namespace App\Http\Controllers\Api\Scales;
 
 use App\Domain\Theory\Models\Scale;
 use App\Http\Resource\ScaleResource;

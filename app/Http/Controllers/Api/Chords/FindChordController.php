@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Chords;
+namespace App\Http\Controllers\Api\Chords;
 
 use App\Domain\Theory\Models\Chord;
 use App\Http\Resource\ChordResource;

@@ -1,0 +1,31 @@
+//
+// Mixins
+//
+// :: Clearfix
+// :: Font Size
+
+//
+// Clearfix
+//
+
+@mixin clearfix {
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+//
+// Font Size
+//
+
+
+@mixin font-size($target-font-size) {
+    $target: strip($target-font-size);
+    $base: strip($base-font-size);
+    $height: strip($base-line-height);
+    $count: ceil($target / $height);
+    font-size: #{$target / $base}rem;
+    line-height: lines($count);
+}

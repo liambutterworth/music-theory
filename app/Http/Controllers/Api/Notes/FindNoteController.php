@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Notes;
+namespace App\Http\Controllers\Api\Notes;
 
 use App\Domain\Theory\Models\Note;
 use App\Http\Resource\NoteResource;

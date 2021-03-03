@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\Chords;
-use App\Http\Controllers\Intervals;
-use App\Http\Controllers\Notes;
-use App\Http\Controllers\Scales;
+use App\Http\Controllers\Api\Chords;
+use App\Http\Controllers\Api\Intervals;
+use App\Http\Controllers\Api\Notes;
+use App\Http\Controllers\Api\Scales;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api')->group(function() {

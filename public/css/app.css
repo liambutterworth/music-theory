@@ -1,0 +1,74 @@
+*, *::before, *::after {
+  border: none;
+  box-sizing: border-box;
+  margin: 0;
+  outline: 0;
+  padding: 0;
+}
+
+html, body {
+  font-size: 100%;
+  height: 100%;
+  font-family: Helvetica;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: #f5f8fa;
+  color: #666;
+  font-size: 14px;
+}
+
+a {
+  color: #1abc9c;
+}
+a:focus, a:hover {
+  color: #17a689;
+  text-decoration: none;
+}
+
+ul, ol {
+  list-style-type: none;
+  margin-bottom: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+h1 {
+  font-size: 2.5714285714rem;
+  line-height: 3rem;
+}
+
+h2 {
+  font-size: 2.2857142857rem;
+  line-height: 3rem;
+}
+
+h3 {
+  font-size: 2rem;
+  line-height: 3rem;
+}
+
+h4 {
+  font-size: 1.7142857143rem;
+  line-height: 3rem;
+}
+
+h5 {
+  font-size: 1.4285714286rem;
+  line-height: 1.5rem;
+}
+
+h6 {
+  font-size: 1.2857142857rem;
+  line-height: 1.5rem;
+}
+
+small {
+  font-size: 0.8571428571rem;
+  line-height: 1.5rem;
+}

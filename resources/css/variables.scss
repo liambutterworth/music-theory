@@ -1,0 +1,44 @@
+//
+// Variables
+//
+// :: Colors
+// :: Typography
+
+//
+// Colors
+//
+
+$color-dark: #666;
+$color-light: #fefefe;
+$color-neutral: #e4ecf2;
+$color-neutral-dark: darken($color-neutral, 5%);
+$color-neutral-light: lighten($color-neutral, 5%);
+$color-primary: #1abc9c;
+$color-primary-dark: darken($color-primary, 5%);
+$color-primary-light: lighten($color-primary, 5%);
+$color-secondary: #34495e;
+$color-secondary-dark: darken($color-secondary, 5%);
+$color-secondary-light: lighten($color-secondary, 5%);
+$color-tertiary: #bc631a;
+$color-tertiary-dark: darken($color-tertiary, 5%);
+$color-tertiary-light: lighten($color-tertiary, 5%);
+$color-warning: #b99838;
+$color-warning-dark: darken($color-warning, 20%);
+$color-warning-light: lighten($color-warning, 30%);
+$color-error: #a65058;
+$color-error-dark: darken($color-error, 20%);
+$color-error-light: lighten($color-error, 30%);
+
+//
+// Typography
+//
+
+$base-font-size: 14px;
+$base-line-height: 21px;
+$font-size-small: 12px;
+$font-size-h6: 18px;
+$font-size-h5: 20px;
+$font-size-h4: 24px;
+$font-size-h3: 28px;
+$font-size-h2: 32px;
+$font-size-h1: 36px;

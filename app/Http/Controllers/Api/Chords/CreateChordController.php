@@ -6,7 +6,7 @@ use App\Domain\Theory\Actions\CreateChordAction;
 use App\Http\Requests\Requests\CreateChordRequest;
 use App\Http\Resources\ChordResource;
 
-class CreateChordsController
+class CreateChordController
 {
     public function __invoke(
         CreateChordAction $action,

@@ -6,7 +6,7 @@ use App\Domain\Theory\Actions\CreateScaleAction;
 use App\Http\Requests\Requests\CreateScaleRequest;
 use App\Http\Resources\ScaleResource;
 
-class CreateScalesController
+class CreateScaleController
 {
     public function __invoke(
         CreateScaleRequest $request,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Intervals;
+namespace App\Http\Controllers\Api\Intervals;
 
 use App\Domain\Theory\Models\Interval;
 use App\Http\Resource\IntervalResource;
