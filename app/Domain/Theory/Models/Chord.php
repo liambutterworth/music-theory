@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Chord extends Model
 {
-    protected $guarded = [];
+    protected $guarded = [
+        'id',
+    ];
 
     public function newEloquentBuilder($query): ChordBuilder
     {

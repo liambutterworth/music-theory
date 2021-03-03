@@ -1,38 +1,42 @@
 <?php
 
+use App\Http\Controllers\Chords;
+use App\Http\Controllers\Intervals;
+use App\Http\Controllers\Notes;
+use App\Http\Controllers\Scales;
 use Illuminate\Support\Facades\Route;
 
-Route::group([
-    'namespace' => 'App\Http\Controllers',
-    'prefix' => 'api',
-], function() {
-
-    //
-    // Intervals
-    //
-
-    Route::apiResource('intervals', 'IntervalController');
+Route::prefix('api')->group(function() {
 
     //
     // Chords
     //
 
-    Route::get('chords/{chord}/intervals', 'ChordController@intervals')->name('chord.intervals');
-    Route::get('chords/{chord}/notes/{root}', 'ChordController@notes')->name('chord.notes');
-    Route::apiResource('chords', 'ChordController');
+    Route::get('chords', Chords\ListChordsController::class);
+    Route::get('chords/{chord}', Chords\FindChordController::class);
+    Route::post('chords', Chords\CreateChordController::class);
+    Route::put('chords/{chord}', Chords\CreateChordController::class);
 
     //
-    // Scales
+    // Intervals
     //
 
-    Route::get('scales/{scale}/intervals', 'ChordController@intervals')->name('scale.intervals');
-    Route::get('scales/{scale}/notes/{root}', 'ChordController@notes')->name('scale.notes');
-    Route::apiResource('scales', 'ScaleController');
+    Route::get('intervals', Intervals\ListIntervalsController::class);
+    Route::get('intervals/{interval}', Intervals\FindIntervalController::class);
 
     //
     // Notes
     //
 
-    Route::get('notes/{note}/key', 'NoteController@key')->name('notes.key');
-    Route::apiResource('notes', 'NoteController');
+    Route::get('notes', Notes\ListnotesController::class);
+    Route::get('notes/{note}', Notes\FindnoteController::class);
+
+    //
+    // Scales
+    //
+
+    Route::get('scales', Scales\ListScalesController::class);
+    Route::get('scales/{scale}', Scales\FindScaleController::class);
+    Route::post('scales', Scales\CreateScaleController::class);
+    Route::put('scales/{chord}', Scales\UpdateScaleController::class);
 });

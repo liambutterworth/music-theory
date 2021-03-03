@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
 {
+    protected $guarded = [
+        'id',
+    ];
+
     public function newEloquentBuilder($query): NoteBuilder
     {
         return new NoteBuilder($query);

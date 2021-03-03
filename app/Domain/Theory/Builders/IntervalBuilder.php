@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class IntervalBuilder extends Builder
 {
-    public function whereInFormula(string $formula): self
+    public function fromFormula(string $formula): self
     {
-        return $this->whereIn('degree', explode('-', $formula));
+        return $this->whereInFormula('degree', explode('-', $formula));
     }
 }
