@@ -9,11 +9,6 @@ class CreateChordAction
 {
     public function execute(array $data): Chord
     {
-        $chord = Chord::create($data);
-        $ids = Interval::whereInFormula($chord->formula)->pluck('id');
-
-        $chord->intervals()->attach($ids);
-
-        return $chord;
+        return Chord::create($data);
     }
 }

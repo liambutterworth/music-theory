@@ -22,9 +22,4 @@ class Chord extends Model
     {
         return new ChordCollection($chords);
     }
-
-    public function intervals(): BelongsToMany
-    {
-        return $this->belongsToMany(Interval::class, 'chord_degrees');
-    }
 }

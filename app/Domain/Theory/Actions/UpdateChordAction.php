@@ -9,16 +9,6 @@ class UpdateChordAction
 {
     public function execute(int $id, array $data): Chord
     {
-        $chord = Chord::find($id);
-
-        $chord->fill($data)->save();
-
-        if ($chord->wasChanged('formula')) {
-            $ids = Interval::whereInFormual($chord->formula)->pluck('id');
-
-            $chord->intervals()->sync($ids);
-        }
-
-        return $chord;
+        Chord::where('id', $id)->update($data);
     }
 }

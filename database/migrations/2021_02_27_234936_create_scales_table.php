@@ -12,6 +12,7 @@ class CreateScalesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('formula');
+            $table->timestamps();
         });
     }
 

@@ -28,8 +28,9 @@ Route::group([], function() {
     // Notes
     //
 
-    Route::get('notes', Notes\ListnotesController::class);
-    Route::get('notes/{note}', Notes\FindnoteController::class);
+    Route::get('notes', Notes\ListNotesController::class);
+    Route::get('notes/{note}', Notes\FindNoteController::class);
+    Route::get('notes/{note}/key', Notes\ListKeyNotesController::class);
 
     //
     // Scales

@@ -26,6 +26,11 @@ class NoteBuilder extends Builder
         return $this->where('is_sharp', true);
     }
 
+    public function prefer(string $symbol): self
+    {
+        return $symbol === 'b' ? $this->preferFlats() : $this->preferSharps();
+    }
+
     public function preferFlats(): self
     {
         return $this->naturals()->flats();

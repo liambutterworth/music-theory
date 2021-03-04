@@ -22,9 +22,4 @@ class Scale extends Model
     {
         return new ScaleCollection($scales);
     }
-
-    public function intervals(): BelongsToMany
-    {
-        return $this->belongsToMany(Interval::class, 'scale_degrees');
-    }
 }

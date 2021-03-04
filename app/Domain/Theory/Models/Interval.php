@@ -22,14 +22,4 @@ class Interval extends Model
     {
         return new IntervalCollection($intervals);
     }
-
-    public function chords(): BelongsToMany
-    {
-        return $this->belongsToMany(Chord::class, 'chord_degrees');
-    }
-
-    public function scales(): BelongsToMany
-    {
-        return $this->belongsToMany(Scale::class, 'scale_degrees');
-    }
 }

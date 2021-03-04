@@ -9,11 +9,6 @@ class CreateScaleAction
 {
     public function execute(array $data): Scale
     {
-        $chord = Scale::create($data);
-        $ids = Interval::whereInFormula($chord->formula)->pluck('id');
-
-        $chord->intervals()->attach($ids);
-
-        return $chord;
+        return Scale::create($data);
     }
 }

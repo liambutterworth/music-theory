@@ -2,17 +2,34 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Theory\Models\Chord;
-use App\Domain\Theory\Models\Interval;
-use App\Domain\Theory\Models\Note;
-use App\Domain\Theory\Models\Scale;
+use App\Domain\Theory\Actions\CreateIntervalAction;
+use App\Domain\Theory\Actions\CreateChordAction;
+use App\Domain\Theory\Actions\CreateNoteAction;
+use App\Domain\Theory\Actions\CreateScaleAction;
 use Illuminate\Database\Seeder;
 
 class TheorySeeder extends Seeder
 {
+    private CreateIntervalAction $createInterval;
+    private CreateChordAction $createChord;
+    private CreateNoteAction $createNote;
+    private CreateScaleAction $createScale;
+
+    public function __construct(
+        CreateIntervalAction $createInterval,
+        CreateChordAction $createChord,
+        CreateNoteAction $createNote,
+        CreateScaleAction $createScale
+    ) {
+        $this->createInterval = $createInterval;
+        $this->createChord = $createChord;
+        $this->createNote = $createNote;
+        $this->createScale = $createScale;
+    }
+
     public function run(): void
     {
-        Interval::insert([
+        collect([
             [ 'name' => 'Perfect Unison',     'abbr' => 'P1', 'steps' => 0,  'degree' => '1' ],
             [ 'name' => 'Diminished Second',  'abbr' => 'd2', 'steps' => 0,  'degree' => 'bb2' ],
             [ 'name' => 'Minor Second',       'abbr' => 'm2', 'steps' => 1,  'degree' => 'b2' ],
@@ -39,38 +56,46 @@ class TheorySeeder extends Seeder
             [ 'name' => 'Diminished Octave',  'abbr' => 'd8', 'steps' => 11, 'degree' => 'bb8' ],
             [ 'name' => 'Perfect Octave',     'abbr' => 'P8', 'steps' => 12, 'degree' => '8' ],
             [ 'name' => 'Augmented Seventh',  'abbr' => 'A7', 'steps' => 12, 'degree' => '#7' ],
-        ]);
+        ])->each(function($data) {
+            $this->createInterval->execute($data);
+        });
 
-        Chord::insert([
+        collect([
             [ 'name' => 'Major',      'abbr' => 'maj', 'formula' => '1-3-5' ],
             [ 'name' => 'Minor',      'abbr' => 'm',   'formula' => '1-b3-5' ],
             [ 'name' => 'Diminished', 'abbr' => 'dim', 'formula' => '1-b3-b5' ],
             [ 'name' => 'Augmented',  'abbr' => 'aug', 'formula' => '1-3-#5' ],
-        ]);
+        ])->each(function($data) {
+            $this->createChord->execute($data);
+        });
 
-        Scale::insert([
+        collect([
             [ 'name' => 'Major', 'formula' => '1-2-3-4-5-6-7' ],
             [ 'name' => 'Minor', 'formula' => '1-2-b3-4-5-b6-b7' ],
-        ]);
+        ])->each(function($data) {
+            $this->createScale->execute($data);
+        });
 
-        Note::insert([
-            [ 'name' => 'Ab', 'signature' => 'bbbb',     'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
-            [ 'name' => 'A',  'signature' => 'n',        'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
-            [ 'name' => 'A#', 'signature' => '##x##xx#', 'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
-            [ 'name' => 'Bb', 'signature' => 'bb',       'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
-            [ 'name' => 'B',  'signature' => '##',       'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
-            [ 'name' => 'C',  'signature' => 'n',        'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
-            [ 'name' => 'C#', 'signature' => '####',     'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
-            [ 'name' => 'Db', 'signature' => 'bbbbb',    'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
-            [ 'name' => 'D',  'signature' => '##',       'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
-            [ 'name' => 'D#', 'signature' => '##x###x#', 'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
-            [ 'name' => 'Eb', 'signature' => 'bbb',      'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
-            [ 'name' => 'E',  'signature' => '####',     'is_natural' => true,  'is_accidental' => true,  'is_flat' => false, 'is_sharp' => false ],
-            [ 'name' => 'F',  'signature' => 'b',        'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
-            [ 'name' => 'F#', 'signature' => '######',   'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
-            [ 'name' => 'Gb', 'signature' => 'bbbbbb',   'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
-            [ 'name' => 'G',  'signature' => '#',        'is_natural' => false, 'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
-            [ 'name' => 'G#', 'signature' => '######x',  'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
-        ]);
+        collect([
+            [ 'name' => 'Ab', 'symbol' => 'b', 'signature' => 'bbbb',     'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
+            [ 'name' => 'A',  'symbol' => '#', 'signature' => 'n',        'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
+            [ 'name' => 'A#', 'symbol' => '#', 'signature' => '##x##xx#', 'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
+            [ 'name' => 'Bb', 'symbol' => 'b', 'signature' => 'bb',       'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
+            [ 'name' => 'B',  'symbol' => '#', 'signature' => '##',       'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
+            [ 'name' => 'C',  'symbol' => '#', 'signature' => 'n',        'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
+            [ 'name' => 'C#', 'symbol' => '#', 'signature' => '####',     'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
+            [ 'name' => 'Db', 'symbol' => 'b', 'signature' => 'bbbbb',    'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
+            [ 'name' => 'D',  'symbol' => '#', 'signature' => '##',       'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
+            [ 'name' => 'D#', 'symbol' => '#', 'signature' => '##x###x#', 'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
+            [ 'name' => 'Eb', 'symbol' => 'b', 'signature' => 'bbb',      'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
+            [ 'name' => 'E',  'symbol' => '#', 'signature' => '####',     'is_natural' => true,  'is_accidental' => true,  'is_flat' => false, 'is_sharp' => false ],
+            [ 'name' => 'F',  'symbol' => 'b', 'signature' => 'b',        'is_natural' => true,  'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
+            [ 'name' => 'F#', 'symbol' => '#', 'signature' => '######',   'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
+            [ 'name' => 'Gb', 'symbol' => 'b', 'signature' => 'bbbbbb',   'is_natural' => false, 'is_accidental' => true,  'is_flat' => true,  'is_sharp' => false ],
+            [ 'name' => 'G',  'symbol' => '#', 'signature' => '#',        'is_natural' => false, 'is_accidental' => false, 'is_flat' => false, 'is_sharp' => false ],
+            [ 'name' => 'G#', 'symbol' => '#', 'signature' => '######x',  'is_natural' => false, 'is_accidental' => true,  'is_flat' => false, 'is_sharp' => true ],
+        ])->each(function($data) {
+            $this->createNote->execute($data);
+        });
     }
 }
