@@ -1966,7 +1966,9 @@ __webpack_require__.r(__webpack_exports__);
     AppContainer: components_App_Container__WEBPACK_IMPORTED_MODULE_0__.default
   },
   mounted: function mounted() {
-    console.log('mounted');
+    this.$api.get('chords').then(function (response) {
+      console.log(response);
+    });
   }
 });
 
@@ -1995,8 +1997,9 @@ __webpack_require__.r(__webpack_exports__);
 vue__WEBPACK_IMPORTED_MODULE_2__.default.prototype.$api = axios__WEBPACK_IMPORTED_MODULE_0___default().create({
   baseURL: 'http://localhost:8080/api/',
   headers: {
-    'X-Requested-With': 'XMLHttpRequest',
-    'Accept': 'application/json'
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest'
   }
 });
 vue__WEBPACK_IMPORTED_MODULE_2__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_3__.default);

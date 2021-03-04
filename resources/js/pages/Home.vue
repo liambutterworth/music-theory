@@ -16,7 +16,9 @@ export default {
     },
 
     mounted() {
-        console.log('mounted');
+        this.$api.get('chords').then(response => {
+            console.log(response);
+        });
     },
 };
 

@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\Notes;
 use App\Http\Controllers\Api\Scales;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api')->group(function() {
+Route::group([], function() {
 
     //
     // Chords

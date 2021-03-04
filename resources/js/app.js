@@ -7,8 +7,9 @@ Vue.prototype.$api = Axios.create({
     baseURL: 'http://localhost:8080/api/',
 
     headers: {
-        'X-Requested-With': 'XMLHttpRequest',
         'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
     },
 });
 
