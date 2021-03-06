@@ -14,6 +14,10 @@
             <router-view />
         </main>
 
+        <script>
+            window.theory = @json($theory);
+        </script>
+
         <script src="{{ mix('js/app.js') }}"></script>
     </body>
 </html>

@@ -10,10 +10,10 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class ListKeyNotesController
 {
     public function __invoke(
-        Note $root,
+        Note $note,
         GetKeyNotesAction $action
     ): ResourceCollection {
-        $notes = $action->execute($root);
+        $notes = $action->execute($note);
 
         dd($notes);
     }

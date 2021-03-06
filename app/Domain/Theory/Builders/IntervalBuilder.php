@@ -6,24 +6,24 @@ use Illuminate\Database\Eloquent\Builder;
 
 class IntervalBuilder extends Builder
 {
-    public function formula( $formula): self
+    public function formula($formula): self
     {
-        return $this->where('degree', explode('-', $formula));
+        return $this->whereIn('degree', explode('-', $formula));
     }
 
     public function major(): self
     {
-        return $this->formula('1-2-3-4-5-6-7');
+        return $this->ionian();
     }
 
     public function minor(): self
     {
-        return $this->formula('1-2-b3-4-5-b6-b7');
+        return $this->aeolian();
     }
 
     public function ionian(): self
     {
-        return $this->major();
+        return $this->formula('1-2-3-4-5-6-7');
     }
 
     public function dorian(): self
@@ -48,7 +48,7 @@ class IntervalBuilder extends Builder
 
     public function aeolian(): self
     {
-        return $this->minor();
+        return $this->formula('1-2-b3-4-5-b6-b7');
     }
 
     public function locrian(): self

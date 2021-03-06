@@ -10,9 +10,6 @@ class GetKeyNotesAction
 {
     public function execute(Note $root)
     {
-        $intervals = Interval::major()->get();
-        $notes = Note::prefer($root->symbol)->get();
-
-        dd($notes);
+        //
     }
 }

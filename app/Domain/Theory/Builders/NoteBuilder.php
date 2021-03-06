@@ -33,11 +33,11 @@ class NoteBuilder extends Builder
 
     public function preferFlats(): self
     {
-        return $this->naturals()->flats();
+        return $this->where('is_natural', true)->orWhere('is_flat', true);
     }
 
     public function preferSharps(): self
     {
-        return $this->naturals()->sharps();
+        return $this->where('is_natural', true)->orWhere('is_sharp', true);
     }
 }
