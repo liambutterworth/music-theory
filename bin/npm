@@ -1,0 +1,2 @@
+#!/bin/bash
+docker exec -it music_theory_php npm "$@"
