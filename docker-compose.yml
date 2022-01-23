@@ -24,3 +24,6 @@ services:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
     networks:
       - music_theory_network
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: music_theory_mysql

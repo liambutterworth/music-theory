@@ -1,2 +1,2 @@
 #!/bin/bash
-docker exec -it nate_php php artisan "$@"
+docker exec -it music_theory_php php artisan "$@"
