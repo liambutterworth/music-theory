@@ -8,6 +8,11 @@ class IntervalCollection extends Collection
 {
     public function toFormula(): string
     {
-        return $this->pluck('abbr')->implode('-');
+        return $this->pluck('degree')->implode('-');
+    }
+
+    public function invert(int $inversion): self
+    {
+        return $this->skip($inversion)->merge($this->take($inversion));
     }
 }

@@ -9,8 +9,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
+            NoteSeeder::class,
             IntervalSeeder::class,
             ChordSeeder::class,
+            ScaleSeeder::class,
         ]);
     }
 }

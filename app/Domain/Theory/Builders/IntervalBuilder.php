@@ -9,6 +9,6 @@ class IntervalBuilder extends Builder
 {
     public function fromFormula(string $formula): self
     {
-        return $this->whereIn('abbr', Str::of($formula)->explode('-'));
+        return $this->whereIn('degree', Str::of($formula)->explode('-'));
     }
 }

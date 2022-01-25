@@ -8,20 +8,25 @@ use Illuminate\Support\Facades\Validator;
 
 class CreateScale
 {
+    public function __construct(
+        private SyncChordIntervals $syncChordIntervals,
+    ) {}
+
     public function execute(array $data): Scale
     {
-        $validated = Validator::make($data, [
+        Validator::make($data, [
             'name' => 'required|string',
             'formula' => 'string',
-        ])->validated();
+        ])->validate();
 
-        $formula = Arr::pull($validated, 'formula');
-        $scale = new Scale($validated);
+        $scale = new Scale;
+
+        $scale->name = Arr::get($data, 'name');
 
         $scale->save();
 
-        if ($formula) {
-            $this->syncScaleIntervals->execute($scale, $formula);
+        if (Arr::has($data, 'formula')) {
+            $this->syncScaleIntervals->execute($scale, Arr::get($data, 'formula'));
         }
 
         return $scale;

@@ -14,7 +14,7 @@ class Interval extends Model
         return new IntervalBuilder($query);
     }
 
-    public function newCollection(array $models = [])
+    public function newCollection(array $models = []): IntervalCollection
     {
         return new IntervalCollection($models);
     }

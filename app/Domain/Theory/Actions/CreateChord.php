@@ -17,7 +17,7 @@ class CreateChord
         Validator::make($data, [
             'name' => 'required|string',
             'symbol' => 'required|string',
-            'intervals' => 'array',
+            'formula' => 'string',
         ])->validate();
 
         $chord = new Chord;
@@ -27,8 +27,8 @@ class CreateChord
 
         $chord->save();
 
-        if (Arr::has($data, 'intervals')) {
-            $this->syncChordIntervals->execute(Arr::get($data, 'intervals'));
+        if (Arr::has($data, 'formula')) {
+            $this->syncChordIntervals->execute($chord, Arr::get($data, 'formula'));
         }
 
         return $chord;
