@@ -6,7 +6,7 @@ use App\Domain\Theory\Models\Scale;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
-class CreateScale
+class UpdateScale
 {
     public function execute(array $data): Scale
     {

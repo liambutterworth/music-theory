@@ -5,9 +5,9 @@ namespace App\Domain\Theory\Actions;
 use App\Domain\Theory\Models\Interval;
 use Illuminate\Support\Facades\Validator;
 
-class CreateInterval
+class UpdateInterval
 {
-    public function execute(array $data): Interval
+    public function execute(Interval $interval, array $data): Interval
     {
         $validated = Validator::make($data, [
             'name' => 'required|string',
@@ -16,10 +16,9 @@ class CreateInterval
             'steps' => 'required|numeric',
         ])->validated();
 
-        $interval = new Interval($validated);
-
-        $interval->save();
+        $interval->fill($validated)->save();
 
         return $interval;
     }
 }
+
