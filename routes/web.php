@@ -2,12 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-use Illuminate\Support\Str;
-
-use App\Domain\Theory\Support\Note;
-$note = new Note('C##');
-dd($note->isValid());
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes

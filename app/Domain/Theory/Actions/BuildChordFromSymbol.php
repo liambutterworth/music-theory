@@ -4,9 +4,8 @@ namespace App\Domain\Theory\Actions;
 
 use App\Domain\Theory\Data\ChordData;
 use App\Domain\Theory\Models\Chord;
-use App\Support\Action;
 
-class BuildChordFromSymbol extends Action
+class BuildChordFromSymbol
 {
     public function __construct(
         private ParseChordSymbol $parseChordSymbol,
@@ -15,17 +14,18 @@ class BuildChordFromSymbol extends Action
     public function execute(string $symbol): ChordData
     {
         $symbol = $this->parseChordSymbol->execute($symbol);
-        $chord = Chord::fromSymbol($symbol->chord);
-        $intervals = $chord->intervals->applySymbol($symbol);
-        $notes = $intervals->toNotes();
+        $chord = Chord::symbol($symbol->chord)->first();
 
         return new ChordData(
-            symbol: $symbol->full,
             name: $chord->name,
-            root: $symbol->root,
-            inversion: $symbol->inversion,
-            intervals: $intervals->toArray(),
-            notes: $notes->toArray(),
+            symbol: $symbol->chord,
+            intervals: $this->getIntervals($chord, $symbol),
+            notes: $this->getNotes($chord, $symbol),
         );
+    }
+
+    public function getIntervals(Chord $chord, ChordSymbolData $symbol): array
+    {
+        
     }
 }

@@ -6,7 +6,7 @@ use App\Domain\Theory\Data\ChordSymbolData;
 use App\Support\Action;
 use Illuminate\Support\Str;
 
-class ParseChordSymbol extends Action
+class ParseChordSymbol
 {
     public function execute(string $symbol): ChordSymbolData
     {

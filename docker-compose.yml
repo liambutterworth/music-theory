@@ -24,6 +24,17 @@ services:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d
     networks:
       - music_theory_network
-  # mysql:
-  #   image: mysql:8.0
-  #   container_name: music_theory_mysql
+  mysql:
+    image: mysql:8.0
+    container_name: music_theory_mysql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    ports:
+      - 33061:3306
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+    networks:
+      - music_theory_network

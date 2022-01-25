@@ -17,6 +17,7 @@ class CreateIntervalsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('abbr');
+            $table->string('degree');
             $table->integer('steps');
             $table->timestamps();
         });

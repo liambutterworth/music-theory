@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 class IntervalCollection extends Collection
 {
-    public function applySymbol(ChordSymbolData $symbol)
+    public function toFormula(): string
     {
-        
+        return $this->pluck('abbr')->implode('-');
     }
 }

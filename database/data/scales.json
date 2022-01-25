@@ -1,0 +1,4 @@
+[
+    { "name": "Major", "intervals": "1-2-3-4-5-6-7"    },
+    { "name": "Minor", "intervals": "1-2-b3-4-5-b6-b7" }
+]
