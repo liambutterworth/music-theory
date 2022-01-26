@@ -2,10 +2,16 @@
 
 namespace App\Domain\Theory\Builders;
 
+use App\Domain\Theory\Models\Note;
 use Illuminate\Database\Eloquent\Builder;
 
 class NoteBuilder extends Builder
 {
+    public function name(string $name): Note
+    {
+        return $this->where('name', $name)->first();
+    }
+
     public function naturals(): self
     {
         return $this->where('is_natural', true);
