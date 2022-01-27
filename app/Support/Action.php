@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\App;
 
 abstract class Action
 {
-    public static function make(): self
+    public static function execute(...$arguments)
     {
-        return App::make(static::class);
+        return App::make(static::class)->handle(...$arguments);
     }
 }

@@ -20,16 +20,16 @@ class Note extends Model
 
     public function newCollection(array $models = []): NoteCollection
     {
-        return new NoteCollection($models);
-    }
-
-    public function getPrefersSharpsAttribute(): bool
-    {
-        return !$this->prefers_flats && $this->name !== 'C';
+        return new NoteCollection($models, 'name');
     }
 
     public function getPrefersFlatsAttribute(): bool
     {
         return Str::contains($this->name, 'b') || $this->name === 'F';
+    }
+
+    public function getPrefersSharpsAttribute(): bool
+    {
+        return !$this->prefers_flats;
     }
 }

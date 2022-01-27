@@ -4,14 +4,16 @@ namespace App\Domain\Theory\Actions;
 
 use App\Domain\Theory\Models\Note;
 use App\Domain\Theory\Support\Letter;
+use App\Support\Action;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class ResolveNote
+class ResolveNote extends Action
 {
     private Collection $names;
 
-    public function __construct()
+    public function __construct(private Request $request)
     {
         $this->names = new Collection([
             'A',
@@ -29,15 +31,16 @@ class ResolveNote
         ]);
     }
 
-    public function execute(string $name): Note
+    public function handle(string $note): string
     {
+        return $this->test();
         dd($this->names->flatten());
 
-        $notes = Note::all();
+        // $notes = Note::all();
 
-        if ($notes->contains('name', $name)) {
-            return Note::name($name);
-        }
+        // if ($notes->contains('name', $name)) {
+        //     return $notes->firstWhere('name', $name);
+        // }
 
         $letter = new Letter($name);
         $signs = Str::matchAll('/#|b/', $name);
@@ -56,5 +59,15 @@ class ResolveNote
         }
 
         dd($letter);
+    }
+
+    private function foo(): string
+    {
+        return 'called foo';
+    }
+
+    protected function test()
+    {
+        return 'test failed';
     }
 }

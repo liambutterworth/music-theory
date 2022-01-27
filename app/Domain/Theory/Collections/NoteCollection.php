@@ -3,13 +3,16 @@
 namespace App\Domain\Theory\Collections;
 
 use App\Domain\Theory\Models\Interval;
+use App\Domain\Theory\Models\Note;
 use Illuminate\Database\Eloquent\Collection;
 
 class NoteCollection extends Collection
 {
     public static function fromIntervals(string $root, IntervalCollection $intervals): self
     {
-        $notes = static::list()->invert($root);
+        dd($root, $intervals->pluck('abbr')->toArray());
+
+        $notes = Note::preferFlats()->get()->invert($root);
 
         return $intervals->map(function($interval) use($notes) {
             return $notes->get($interval->steps);

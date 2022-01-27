@@ -9,6 +9,7 @@ class NoteBuilder extends Builder
 {
     public function name(string $name): Note
     {
+        dd($name);
         return $this->where('name', $name)->first();
     }
 
