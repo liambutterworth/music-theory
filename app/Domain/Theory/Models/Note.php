@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 
 class Note extends Model
 {
+    protected string $theoretical_name;
+
     public $fillable = [
         'name',
     ];
@@ -31,5 +33,20 @@ class Note extends Model
     public function getPrefersSharpsAttribute(): bool
     {
         return !$this->prefers_flats;
+    }
+
+    public function setTheoreticalNameAttribute(string $name): void
+    {
+        $this->theoretical_name = $name;
+    }
+
+    public function getRealNameAttribute(): string
+    {
+        return $this->attributes['name'];
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->theoretical_name ?? $this->real_name;
     }
 }

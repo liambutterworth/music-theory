@@ -27,9 +27,9 @@ class NoteCollection extends Collection
     public function invert(string $inversion): self
     {
         return $this->skipUntil(function($note) use($inversion) {
-            return is_array($note) ? in_array($inversion, $note) : $inversion === $note;
+            return $note->name === $inversion;
         })->merge($this->takeUntil(function($note) use($inversion ) {
-            return is_array($note) ? in_array($inversion, $note) : $inversion === $note;
+            return $note->name === $inversion;
         }));
     }
 }

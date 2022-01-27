@@ -2,12 +2,14 @@
 
 namespace App\Domain\Theory\Support;
 
-use App\Domain\Theory\Models\Interval;
-use ArrayAccess;
+use App\Domain\Theory\Support\Concerns\HasAttributes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class Note implements ArrayAccess
+class Note
 {
+    use HasAttributes;
+
     const LIST = [
         'A', 'A#', 'Bb',
         'B',
@@ -18,111 +20,95 @@ class Note implements ArrayAccess
         'G', 'G#', 'Ab',
     ];
 
-    public function __construct(
-        protected string $name
-    ) {}
+    protected string $real;
 
-    public function __get(string $property)
+    public function __construct(string $name)
     {
-        if (property_exists($this, $property)) {
-            return $this->$property;
+        $this->setAttribute('name', $this->validate($name));
+        $this->setAttribute('real', $this->resolve($name));
+    }
+
+    public function __get(string $key): mixed
+    {
+        return $this->getAttribute($key);
+    }
+
+    public function __set(string $key, mixed $value): void
+    {
+        $this->setAttribute($key, $value);
+    }
+
+    public static function all(): Collection
+    {
+        return new Collection(static::LIST);
+    }
+
+    public static function naturals(): Collection
+    {
+        return static::all()->filter(function($note) {
+            return !Str::contains($note, ['b', '#']);
+        })->values();
+    }
+
+    public static function accidentals(): Collection
+    {
+        return static::all()->filter(function($note) {
+            return Str::contains($note, ['b', '#']);
+        })->values();
+    }
+
+    public static function flats(): Collection
+    {
+        return static::all()->filter(function($note) {
+            return Str::contains($note, 'b');
+        })->values();
+    }
+
+    public static function sharps(): Collection
+    {
+        return static::all()->filter(function($note) {
+            return Str::contains($note, '#');
+        });
+    }
+
+    public static function preferFlats(): Collection
+    {
+        return static::all()->filter(function($note) {
+            return !Str::contains($note, '#');
+        })->values();
+    }
+
+    public static function preferSharps(): Collection
+    {
+        return static::all()->filter(function($note) {
+            return !Str::contains($note, 'b');
+        })->values();
+    }
+
+    public function validate(string $name): string
+    {
+        return $name; // TODO add validation
+    }
+
+    public function resolve(string $name): string
+    {
+        if (static::all()->contains($name)) {
+            return $name;
         }
-    }
 
-    public function offsetExists($offset): bool
-    {
-        return property_exists($this, $offset);
-    }
+        $string = Str::of($name)->replace('x', '##');
+        $start = $string->match('/[A-G](?:[b#](?=#))?/');
+        $steps = $string->after($start)->matchAll('/([b#])/')->count();
+        $notes = $string->contains('b') ? static::preferFlats() : static::preferSharps();
+        $index = $notes->search($start);
 
-    public function offsetGet($offset): mixed
-    {
-        return $this->$offset;
-    }
+        if ($string->contains('#')) {
+            $index += $steps;
+        } else {
+            $index -= $steps;
+        }
 
-    public function offsetSet($offset, $value): void
-    {
-        $this->$offset = $value;
-    }
-
-    public function offsetUnset($offset): void
-    {
-        unset($this->$offset);
-    }
-
-    public static function all(): Notes
-    {
-        return Notes::wrap(static::LIST);
-    }
-
-    public static function flats(): Notes
-    {
-        return static::all()->filter(function($note) {
-            return $note->isFlat();
-        });
-    }
-
-    public static function sharps(): Notes
-    {
-        return static::all()->filter(function($note) {
-            return $note->isSharp();
-        });
-    }
-
-    public static function preferFlats(): Notes
-    {
-        return static::all()->filter(function($note) {
-            return $note->isNatural() || $note->isFlat();
-        });
-    }
-
-    public static function preferSharps(): Notes
-    {
-        return static::all()->filter(function($note) {
-            return !Str::contains($note->name, 'b');
-        });
-    }
-
-    public static function fromFormula(Note|string $root, string $formula): Notes
-    {
-        $note = $root instanceof Note ? $root : new Note($root);
-        $chromatic = $note->prefersFlats() ? Note::preferFlats() : Note::preferSharps();
-
-        dd($chromatic->pluck('name')->toArray(), Interval::fromFormula($formula)->pluck('abbr', 'steps')->toArray());
-        return $chromatic->intersectByKeys(Interval::fromFormula($formula)->pluck('steps'));
-    }
-
-    public function validate(): bool
-    {
-        return true; // TODO add validation
-    }
-
-    public function isNatural(): bool
-    {
-        return !$this->isAccidental();
-    }
-
-    public function isAccidental(): bool
-    {
-        return Str::contains($this->name, ['b', '#']);
-    }
-
-    public function isSharp(): bool
-    {
-        return Str::contains($this->name, '#');
-    }
-
-    public function isFlat(): bool
-    {
-        return Str::contains($this->name, 'b');
-    }
-
-    public function prefersFlats(): bool
-    {
-        return Str::contains($this->name, 'b') || $this->name === 'F';
-    }
-
-    public function prefersSharps(): bool
-    {
-        return !$this->prefersFlats();
+        return $notes->slice($index, 1)->first();
     }
 }
+
