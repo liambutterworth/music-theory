@@ -4,74 +4,72 @@ namespace App\Domain\Theory\Support;
 
 use Illuminate\Support\Collection;
 
-class Notes extends Collection
+class Notes
 {
-    public function __construct(array $items = [])
-    {
-        parent::__construct($items);
+    protected Collection $collection;
 
-        $this->transform(function($name) {
-            return $name instanceof Note ? $name : new Note($name);
-        });
+    public function __construct(Collection|array $notes = [])
+    {
+        $this->collection = is_array($notes) ? new Collection($notes) : $notes;
     }
 
-    public function validate(): self
+    public static function __callStatic(string $method, array $arguments)
     {
-        $this->each->validate();
+        return static::all()->$method(...$arguments);
+    }
 
-        return $this;
+    public static function all(): self
+    {
+        return new static(Dictionary::get('notes'));
     }
 
     public function naturals(): self
     {
-        return $this->filter(function($note) {
-            $note->isNatural();
-        });
+        $this->collection = $this->collection->filter(function($note) {
+            return $note->isNatural();
+        })->values();
+
+        return $this;
     }
 
-    public function preferFlats(): self
-    {
-        return $this->filter(function($note) {
-        });
-    }
-
-    // public static function list(): self
+    // public static function accidentals(): Collection
     // {
-    //     return Note::all()->pipeInto(static::class);
+    //     return new static(
+    //         Dictionary::collect('notes')->filter(function($note) {
+    //             return $note->isAccidental();
+    //         })->values()
+    //     );
     // }
 
-    // public static function naturals(): self
+    // public static function flats(): Collection
     // {
-    //     return static::list()->filter(function($name) {
-    //         return !Str::contains($name, ['b', '#']);
-    //     });
+    //     return new static(
+    //         Dictionary::collect('notes')->filter(function($note) {
+    //             return $note->isFlat();
+    //         })->values()
+    //     );
     // }
 
-    // public static function flats(): self
+    // public static function sharps(): Collection
     // {
-    //     return static::list()->filter(function($name) {
-    //         return Str::contains($name, 'b');
-    //     });
+    //     return new static(
+    //         Dictionary::collect('notes')->filter(function($note) {
+    //             return $note->isSharp();
+    //         })->values()
+    //     );
     // }
 
-    // public static function sharps(): self
+    // public static function preferFlats(): Collection
     // {
-    //     return static::list()->filter(function($name) {
-    //         return Str::contains($name, '#');
-    //     });
+    //     return (new static)->filter(function($note) {
+    //         return $note->isNatural() || $note->isFlat();
+    //     })->values();
     // }
 
-    // public static function preferFlats(): self
+    // public static function preferSharps(): Collection
     // {
-    //     return static::list()->filter(function($name) {
-    //         return !Str::contains($name, '#');
-    //     });
-    // }
-
-    // public static function preferSharps(): self
-    // {
-    //     return static::list()->filter(function($name) {
-    //         return !Str::contains($name, 'b');
-    //     });
+    //     return (new static)->filter(function($note) {
+    //         return $note->isNatural() || $note->isSharp();
+    //     })->values();
     // }
 }
