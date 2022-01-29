@@ -2,15 +2,29 @@
 
 namespace App\Domain\Theory\Builders;
 
+use App\Domain\Theory\Actions\ResolveNote;
 use App\Domain\Theory\Models\Note;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 class NoteBuilder extends Builder
 {
     public function name(string $name): Note
     {
-        dd($name);
-        return $this->where('name', $name)->first();
+        $real = ResolveNote::execute($name);
+
+        $note = $this->where('name', $real)->first();
+
+        $note->theoretical_name = $name;
+
+        return $note;
+    }
+
+    public function all(...$arguments): self
+    {
+        return Cache::get('notes.all', function () use ($arguments) {
+            return parent::all(...$arguments);
+        });
     }
 
     public function naturals(): self

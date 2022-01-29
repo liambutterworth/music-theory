@@ -2,26 +2,50 @@
 
 namespace App\Domain\Theory\Collections;
 
-use App\Domain\Theory\Models\Interval;
-use App\Domain\Theory\Models\Note;
 use Illuminate\Database\Eloquent\Collection;
 
 class NoteCollection extends Collection
 {
-    public static function fromIntervals(string $root, IntervalCollection $intervals): self
+    public function naturals(): self
     {
-        dd($root, $intervals->pluck('abbr')->toArray());
-
-        $notes = Note::preferFlats()->get()->invert($root);
-
-        return $intervals->map(function($interval) use($notes) {
-            return $notes->get($interval->steps);
-        })->pipeInto(static::class);
+        return $this->filter(function ($note) {
+            return $note->isNatural();
+        })->values();
     }
 
-    public static function fromFormula(string $root, string $formula): self
+    public function accidentals(): self
     {
-        return static::fromIntervals($root, Interval::fromFormula($formula)->get());
+        return $this->filter(function ($note) {
+            return $note->is_accidental;
+        })->values();
+    }
+
+    public function flats(): self
+    {
+        return $this->filter(function ($note) {
+            return $note->is_flat;
+        })->values();
+    }
+
+    public function sharps(): self
+    {
+        return $this->filter(function ($note) {
+            return $note->is_sharp;
+        })->values();
+    }
+
+    public function preferFlats(): self
+    {
+        return $this->filter(function ($note) {
+            return !$note->is_sharp;
+        })->values();
+    }
+
+    public function preferSharps(): self
+    {
+        return $this->filter(function ($note) {
+            return !$note->is_flat;
+        })->values();
     }
 
     public function invert(string $inversion): self

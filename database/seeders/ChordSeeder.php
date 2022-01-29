@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Theory\Actions\CreateChord;
+use App\Domain\Theory\Models\Chord;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
 
 class ChordSeeder extends Seeder
 {
-    public function run(CreateChord $createChord): void
+    public function run(): void
     {
-        $chords = json_decode(File::get('database/data/chords.json'), true);
-
-        foreach ($chords as $chord) {
-            $createChord->execute($chord);
-        }
+        Chord::createMany([
+            [ 'name' => 'Major',      'symbol' => 'maj', 'intervals' => '1-3-5' ],
+            [ 'name' => 'Minor',      'symbol' => 'm',   'intervals' => '1-b3-5' ],
+            [ 'name' => 'Diminished', 'symbol' => 'dim', 'intervals' => '1-b3-b5' ],
+            [ 'name' => 'Augmented',  'symbol' => 'aug', 'intervals' => '1-3-#5' ],
+        ]);
     }
 }

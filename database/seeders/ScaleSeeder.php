@@ -2,18 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Domain\Theory\Actions\CreateScale;
+use App\Domain\Theory\Models\Scale;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
 
 class ScaleSeeder extends Seeder
 {
-    public function run(CreateScale $createScale): void
+    public function run(): void
     {
-        $scales = json_decode(File::get('database/data/scales.json'), true);
-
-        foreach ($scales as $scale) {
-            $createScale->execute($scale);
-        }
+        Scale::createMany([
+            [ 'name' => 'Major', 'intervals' => '1-2-3-4-5-6-7' ],
+            [ 'name' => 'Minor', 'intervals' => '1-2-b3-4-5-b6-b7' ],
+        ]);
     }
 }

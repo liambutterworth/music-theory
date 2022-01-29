@@ -5,6 +5,7 @@ namespace App\Domain\Theory\Models;
 use App\Domain\Theory\Builders\NoteBuilder;
 use App\Domain\Theory\Collections\NoteCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Note extends Model
@@ -25,6 +26,26 @@ class Note extends Model
         return new NoteCollection($models, 'name');
     }
 
+    public function getIsNaturalAttribute(): bool
+    {
+        return !Str::contains($this->name, ['b', '#']);
+    }
+
+    public function getIsAccidentalAttribute(): bool
+    {
+        return Str::contains($this->name, ['b', '#']);
+    }
+
+    public function getIsFlatAttribute(): bool
+    {
+        return Str::contains($this->name, 'b');
+    }
+
+    public function getIsSharpAttribute(): bool
+    {
+        return Str::contains($this->name, '#');
+    }
+
     public function getPrefersFlatsAttribute(): bool
     {
         return Str::contains($this->name, 'b') || $this->name === 'F';
@@ -32,21 +53,24 @@ class Note extends Model
 
     public function getPrefersSharpsAttribute(): bool
     {
-        return !$this->prefers_flats;
+        return Str::contains($this->name, '#') || $this->name !== 'F';
     }
 
-    public function setTheoreticalNameAttribute(string $name): void
+    public function getTheoreticalNameAttribute(): ?string
     {
-        $this->theoretical_name = $name;
+        return Arr::get($this->attributes, 'theoretical_name');
     }
 
     public function getRealNameAttribute(): string
     {
-        return $this->attributes['name'];
+        return Arr::get($this->attributes, 'name');
     }
 
     public function getNameAttribute()
     {
         return $this->theoretical_name ?? $this->real_name;
+        // return Arr::has($this->attributes, 'theoretical_name')
+        // ? Arr::get($this->attributes, 'theoretical_name')
+        // : Arr::get($this->attributes)
     }
 }
