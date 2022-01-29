@@ -9,15 +9,9 @@ use Illuminate\Support\Facades\Cache;
 
 class NoteBuilder extends Builder
 {
-    public function name(string $name): Note
+    public function resolve(string $name): Note
     {
-        $real = ResolveNote::execute($name);
-
-        $note = $this->where('name', $real)->first();
-
-        $note->theoretical_name = $name;
-
-        return $note;
+        return ResolveNote::execute($name);
     }
 
     public function all(...$arguments): self
