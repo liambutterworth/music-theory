@@ -12,8 +12,6 @@ class Note extends Model
     const SHARP = 'sharp';
     const FLAT_SIGN = 'b';
     const SHARP_SIGN = '#';
-    const DOUBLE_SHARP_SIGN = 'x';
-    const TWO_SHARP_SIGNS = '##';
     const IS_VALID_REGEX = '/^[A-G](?:b+|#+|x)?$/';
     const IS_REAL_REGEX = '/^[ABDEG]b$|^[ACDFG]#$|^[A-G]$/';
     const IS_THEORETICAL_REGEX = '//';
@@ -41,8 +39,6 @@ class Note extends Model
         'G',
         'G#', 'Ab',
     ];
-
-    protected string $theoretical_name;
 
     public $fillable = [
         'name',

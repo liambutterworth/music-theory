@@ -34,26 +34,25 @@ class NoteCollection extends Collection
         })->values();
     }
 
-    public function preferFlats(): self
+    public function invert(string|int $inversion): self
     {
-        return $this->filter(function ($note) {
-            return !$note->is_sharp;
-        })->values();
+        return match (gettype($inversion)) {
+            'integer' => $this->invertByIndex($inversion),
+            'string' => $this->invertByName($inversion),
+        };
     }
 
-    public function preferSharps(): self
+    public function invertByIndex(int $index): self
     {
-        return $this->filter(function ($note) {
-            return !$note->is_flat;
-        })->values();
+        return $this->skip($index)->merge($this->take($index));
     }
 
-    public function invert(string $inversion): self
+    public function invertByName(string $name): self
     {
-        return $this->skipUntil(function($note) use($inversion) {
-            return $note->name === $inversion;
-        })->merge($this->takeUntil(function($note) use($inversion ) {
-            return $note->name === $inversion;
+        return $this->skipUntil(function($note) use($name) {
+            return $note->name === $name;
+        })->merge($this->takeUntil(function($note) use($name ) {
+            return $note->name === $name;
         }));
     }
 }
