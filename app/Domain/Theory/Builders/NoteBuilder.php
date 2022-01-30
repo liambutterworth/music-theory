@@ -5,49 +5,46 @@ namespace App\Domain\Theory\Builders;
 use App\Domain\Theory\Actions\ResolveNote;
 use App\Domain\Theory\Models\Note;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Cache;
 
 class NoteBuilder extends Builder
 {
-    public function resolve(string $name): Note
+    public function fromName(string $name): Note
     {
         return ResolveNote::execute($name);
     }
 
-    public function all(...$arguments): self
+    public function real(): self
     {
-        return Cache::get('notes.all', function () use ($arguments) {
-            return parent::all(...$arguments);
-        });
+        return $this->whereIsReal(true);
     }
 
     public function naturals(): self
     {
-        return $this->where('is_natural', true);
+        return $this->whereIsNatural(true);
     }
 
     public function accidentals(): self
     {
-        return $this->where('is_accidental', true);
+        return $this->whereIsAccidental(true);
     }
 
     public function flats(): self
     {
-        return $this->where('is_flat', true);
+        return $this->real()->whereIsAccidental(true);
     }
 
     public function sharps(): self
     {
-        return $this->where('is_sharp', true);
+        return $this->real()->whereIsSharp(true);
     }
 
     public function preferFlats(): self
     {
-        return $this->where('is_sharp', false);
+        return $this->wherePrefersFlats(true);
     }
 
     public function preferSharps(): self
     {
-        return $this->where('is_flat', false);
+        return $this->wherePrefersSharps(true);
     }
 }

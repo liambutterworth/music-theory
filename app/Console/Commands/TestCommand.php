@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Domain\Theory\Actions\ResolveNote;
+use App\Domain\Theory\Support\NoteNameParser;
 use Illuminate\Console\Command;
 
 class TestCommand extends Command
@@ -12,6 +12,8 @@ class TestCommand extends Command
 
     public function handle()
     {
-        dd(ResolveNote::execute('Bx'));
+        $parser = new NoteNameParser('A##');
+
+        dd($parser);
     }
 }

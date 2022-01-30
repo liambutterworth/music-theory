@@ -21,11 +21,10 @@ class NoteNameParser
     public function __construct(string $name)
     {
         $this->name = Str::of($name);
-        $this->valid = $this->name->test(Note::IS_VALID_REGEX);
 
-        if ($this->valid) {
+        if ($this->isValid()) {
             $this->names = Collection::wrap(Note::REAL_NAMES)->when(
-                $this->name->test(Note::PREFERS_FLATS_REGEX),
+                $this->prefersFlats(),
 
                 function($names) {
                     return $names->filter(function ($name) {
@@ -65,6 +64,10 @@ class NoteNameParser
 
     public function isValid(): bool
     {
+        if (!isset($this->valid)) {
+            $this->valid = $this->name->test(Note::IS_VALID_REGEX);
+        }
+
         return $this->valid;
     }
 
