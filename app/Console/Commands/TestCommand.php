@@ -12,8 +12,6 @@ class TestCommand extends Command
 
     public function handle()
     {
-        $parser = new NoteNameParser('A##');
-
-        dd($parser);
+        dd(NoteNameParser::parse('G##'));
     }
 }

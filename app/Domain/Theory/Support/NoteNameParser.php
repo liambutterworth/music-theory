@@ -2,137 +2,123 @@
 
 namespace App\Domain\Theory\Support;
 
-use App\Domain\Theory\Models\Note;
-use Illuminate\Support\Stringable;
+use App\Domain\Theory\Exceptions\InvalidNoteException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 
 class NoteNameParser
 {
-    protected Collection $names;
-    protected Stringable $name;
-    protected Stringable $reference;
-    protected Stringable $resolved;
-    protected int $referenceIndex;
-    protected int $resolvedIndex;
-    protected int $offset;
-    protected bool $valid;
+    const FLAT = 'flat';
+    const SHARP = 'sharp';
+    const FLAT_SIGN = 'b';
+    const SHARP_SIGN = '#';
+    const IS_VALID_REGEX = '/^[A-G](?:b+|#+|x)?$/';
+    const IS_REAL_REGEX = '/^[ABDEG]b$|^[ACDFG]#$|^[A-G]$/';
+    const IS_THEORETICAL_REGEX = '//';
+    const IS_NATURAL_REGEX = '/^[A-G]$/';
+    const IS_ACCIDENTAL_REGEX = '/^[A-G][b#x]+$/';
+    const IS_FLAT_REGEX = '/b+/';
+    const IS_SHARP_REGEX = '/#+/';
+    const MATCH_REAL_REGEX = '/[ABDEG]b|[ACDFG]#|[A-G](?=x)?/';
+    const MATCH_LETTER_REGEX = '/[A-G]/';
+    const MATCH_SIGNS_REGEX = '/([b#x])/';
+    const PREFERS_FLATS_REGEX = '/^[F]$|^[A-G]b+$/';
+    const PREFERS_SHARPS_REGEX = '/^[ABCDE]$|^[A-G]#+$/';
 
-    public function __construct(string $name)
+    const REAL_NAMES = [
+        'A',
+        'A#', 'Bb',
+        'B',
+        'C',
+        'C#', 'Db',
+        'D',
+        'D#', 'Eb',
+        'E',
+        'F',
+        'F#', 'Gb',
+        'G',
+        'G#', 'Ab',
+    ];
+
+    public static function parse(string $name): self
     {
-        $this->name = Str::of($name);
+        $name = Str::of($name);
 
-        if ($this->isValid()) {
-            $this->names = Collection::wrap(Note::REAL_NAMES)->when(
-                $this->prefersFlats(),
-
-                function($names) {
-                    return $names->filter(function ($name) {
-                        return !Str::contains($name, Note::SHARP_SIGN);
-                    });
-                },
-
-                function ($names) {
-                    return $names->filter(function ($name) {
-                        return !Str::contains($name, Note::FLAT_SIGN);
-                    });
-                }
-            )->values();
-
-            $this->reference = $this->name->match(Note::MATCH_REAL_REGEX);
-            $this->referenceIndex = $this->names->search($this->reference);
-
-            $this->offset = $this->name->after($this->reference)->matchAll(
-                Note::MATCH_SIGNS_REGEX
-            )->reduce(function ($carry, $sign) {
-                return match ($sign) {
-                    'b' => $carry - 1,
-                    '#' => $carry + 1,
-                    'x' => $carry + 2,
-                };
-            });
-
-            $this->resolvedIndex = $this->referenceIndex + $this->offset;
-            $this->resolved = Str::of($this->names->get($this->resolvedIndex));
-        }
-    }
-
-    public static function parse(...$arguments): self
-    {
-        return new static(...$arguments);
-    }
-
-    public function isValid(): bool
-    {
-        if (!isset($this->valid)) {
-            $this->valid = $this->name->test(Note::IS_VALID_REGEX);
+        if (!$name->test(static::IS_VALID_REGEX)) {
+            throw new InvalidNoteException("Note '$name' is invalid");
         }
 
-        return $this->valid;
-    }
+        $names = Collection::wrap(static::REAL_NAMES)->when(
+            $name->test(static::PREFERS_FLATS_REGEX),
 
-    public function isReal(): bool
-    {
-        return $this->name->test(Note::IS_REAL_REGEX);
-    }
+            function($names) {
+                return $names->filter(function ($name) {
+                    return !Str::contains($name, static::SHARP_SIGN);
+                });
+            },
 
-    public function isTheoretical(): bool
-    {
-        return $this->name->test(Note::IS_THEORETICAL_REGEX);
-    }
+            function ($names) {
+                return $names->filter(function ($name) {
+                    return !Str::contains($name, static::FLAT_SIGN);
+                });
+            }
+        )->values();
 
-    public function isNatural(): bool
-    {
-        return $this->name->test(Note::IS_NATURAL_REGEX);
-    }
+        $nameCount = $names->count();
+        $referenceName = $name->match(static::MATCH_REAL_REGEX);
+        $referenceIndex = $names->search($referenceName);
 
-    public function isAccidental(): bool
-    {
-        return $this->name->test(Note::IS_ACCIDENTAL_REGEX);
-    }
+        $referenceOffset = $name->after($referenceName)->matchAll(
+            static::MATCH_SIGNS_REGEX
+        )->reduce(function ($carry, $sign) {
+            return match ($sign) {
+                'b' => $carry - 1,
+                '#' => $carry + 1,
+                'x' => $carry + 2,
+            };
+        });
 
-    public function isFlat(): bool
-    {
-        return $this->name->test(Note::IS_FLAT_REGEX);
-    }
+        $resolvedIndex = ($referenceIndex + $referenceOffset) % $nameCount;
+        $resolvedName = Str::of($names->get($resolvedIndex));
 
-    public function isSharp(): bool
-    {
-        return $this->name->test(Note::IS_SHARP_REGEX);
-    }
+        $letters = $names->filter(function ($name) {
+            return !Str::contains($name, [static::FLAT_SIGN, static::SHARP_SIGN]);
+        })->values();
 
-    public function prefersFlats(): bool
-    {
-        return $this->name->test(Note::PREFERS_FLATS_REGEX);
-    }
+        $letterCount = $letters->count();
+        $letter = $name->match(static::MATCH_LETTER_REGEX);
+        $letterIndexInLetters = $letters->search($letter);
+        $letterIndexInNames = $names->search($letter);
 
-    public function prefersSharps(): bool
-    {
-        return $this->name->test(Note::PREFERS_SHARPS_REGEX);
-    }
+        $raisedLetterIndexInLetters = ($letterIndexInLetters + 1) % $letterCount;
+        $raisedLetter = Str::of($letters->slice($raisedLetterIndexInLetters, 1)->first());
+        $raisedLetterIndexInNames = $names->search($raisedLetter);
+        $raisedLetterOffset = (($raisedLetterIndexInNames + $nameCount) - $letterIndexInNames) % $nameCount;
 
-    public function resolve(): ?string
-    {
-        return $this->resolved ?? null;
-    }
+        $loweredLeterIndexInLetters = ($letterIndexInLetters - 1) % $letterCount;
+        $loweredLetter = Str::of($letters->slice($loweredLeterIndexInLetters, 1)->first());
+        $loweredLetterIndexInNames = $names->search($loweredLetter);
+        $loweredLetterOffset = abs(($loweredLetterIndexInNames - $nameCount) - $letterIndexInNames) % $nameCount;
 
-    public function lower(): string
-    {
-        // TODO
-    }
-
-    public function raise(): string
-    {
-        // TODO
-    }
-
-    public function decrement(): string
-    {
-        // TODO
-    }
-
-    public function increment(): string
-    {
-        // TODO
+        dd([
+            'names' => $names,
+            'name' => (string) $name,
+            'reference.name' => (string) $referenceName,
+            'reference.index' => $referenceIndex,
+            'reference.offset' => $referenceOffset,
+            'resolved.name' => (string) $resolvedName,
+            'resolved.index' => $resolvedIndex,
+            'letter' => (string) $letter,
+            'letter.index-in-letters' => $letterIndexInLetters,
+            'letter.index-in-names' => $letterIndexInNames,
+            'raised.letter' => (string) $raisedLetter,
+            'raised.letter.index-in-names' => $raisedLetterIndexInNames,
+            'raised.letter.formula' => "((raisedLetterIndexInNames + nameCount) - letterIndexInNames) % nameCount",
+            'raised.letter.offset' => "(($raisedLetterIndexInNames + $nameCount) - $letterIndexInNames) % $nameCount = $raisedLetterOffset",
+            'lowered.letter' => (string) $loweredLetter,
+            'lowered.letter.indexInNames' => $loweredLetterIndexInNames,
+            'lowered.letter.formula' => "((loweredLetterIndexInNames - nameCount) - letterIndexInNames) % nameCount",
+            'lowered.letter.offset' => "abs(($loweredLetterIndexInNames - $nameCount) - $letterIndexInNames) % $nameCount = $loweredLetterOffset",
+        ]);
     }
 }

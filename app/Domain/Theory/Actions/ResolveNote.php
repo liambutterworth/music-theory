@@ -2,7 +2,6 @@
 
 namespace App\Domain\Theory\Actions;
 
-use App\Domain\Theory\Exceptions\InvalidNoteException;
 use App\Domain\Theory\Models\Note;
 use App\Domain\Theory\Support\NoteNameParser;
 use App\Support\Action;
@@ -13,10 +12,6 @@ class ResolveNote extends Action
     {
         return Note::whereName($name)->firstOr(function () use ($name) {
             $parser = NoteNameParser::parse($name);
-
-            if (!$parser->isValid()) {
-                throw new InvalidNoteException("Note '$name' is invalid");
-            }
 
             return Note::create([
                 'name' => $name,
