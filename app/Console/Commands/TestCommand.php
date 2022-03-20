@@ -12,6 +12,6 @@ class TestCommand extends Command
 
     public function handle()
     {
-        dd(NoteNameParser::parse('G##'));
+        dd(NoteNameParser::parse('G###')->resolve());
     }
 }
