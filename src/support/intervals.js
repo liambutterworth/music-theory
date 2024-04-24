@@ -14,8 +14,19 @@ export const intervals = [
     { key: 'P8', symbol: '8',  steps: 12 }, { key: 'A7', symbol: '', steps: 12 },
 ]
 
-export const fromFormula = (formula) => {
-    //
+export function find(keyOrSymbol) {
+    return intervals.find(interval => {
+        return interval.key === keyOrSymbol
+            || interval.symbol === keyOrSymbol
+    })
 }
 
-export default { intervals, fromFormula }
+export function fromFormula(formula) {
+    const resolved = []
+
+    formula.split('-').forEach(symbol => {
+        resolved.push(find(symbol))
+    })
+
+    return resolved
+}

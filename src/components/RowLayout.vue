@@ -1,7 +1,7 @@
 <template>
-    <div :class="classes">
+    <base-layout :class="classes">
         <slot />
-    </div>
+    </base-layout>
 </template>
 
 <script setup>
@@ -12,14 +12,13 @@ const props = defineProps({
     gap: Boolean,
     justifyCenter: Boolean,
     justifyEnd: Boolean,
-    pad: Boolean,
 })
 
 const classes = computed(() => ({
-    'gap': props.gap,
+    'flex': true,
+    'gap-2': props.gap,
     'justify-center': props.justifyCenter,
     'justify-end': props.justifyEnd,
-    'p-4': props.pad,
 }))
 
 </script>
